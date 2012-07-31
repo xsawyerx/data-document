@@ -27,7 +27,7 @@ has csv => (
 sub _build_csv {
     my $self = shift;
     my $csv  = Text::CSV->new(
-        $self->has_args ? @{ $self->argsbinary } : ()
+        $self->has_args ? @{ $self->args } : ()
     ) or die 'Cannot create Text::CSV object: ' . Text::CSV->error_diag;
 
     return $csv;
