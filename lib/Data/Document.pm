@@ -51,7 +51,7 @@ sub remove_row {
 
 sub rows_list {
     my $self = shift;
-    return values %{ $self->rows };
+    return $self->rows ? values %{ $self->rows } : ()
 }
 
 sub render {
