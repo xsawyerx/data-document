@@ -40,6 +40,7 @@ sub BUILDARGS {
         },
         @_,
     };
+
     return $args;
 }
 
@@ -55,10 +56,8 @@ sub add_item {
     }
 
     my $item = Data::Document::Item->new( $content, %args );
-    my $id   = $item->object_id;
-
-    $self->{'items'}{$id} = $item;
-    return ( $id, $item );
+    $self->{'items'}{ $item->object_id } = $item;
+    return $item;
 }
 
 sub remove_item {

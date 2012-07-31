@@ -33,16 +33,13 @@ sub add_row {
     my %args    = @_;
 
     if ( $content->$_isa('Data::Document::Row') ) {
-        my $id = $content->object_id;
-        $self->{'rows'}{$id} = $content;
-        return $id;
+        $self->{'rows'}{ $content->object_id } = $content;
+        return $content;
     }
 
     my $row = Data::Document::Row->new( $content, %args );
-    my $id  = $row->object_id;
-
-    $self->{'rows'}{$id} = $row;
-    return ( $id, $row );
+    $self->{'rows'}{ $row->object_id } = $row;
+    return $row;
 }
 
 sub remove_row {
