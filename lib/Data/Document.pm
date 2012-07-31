@@ -1,5 +1,5 @@
 package Data::Document;
-# ABSTRACT: Document thingamagig
+# ABSTRACT: Unified document API
 
 use Moo;
 use Sub::Quote 'quote_sub';

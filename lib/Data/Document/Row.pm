@@ -1,4 +1,6 @@
 package Data::Document::Row;
+# ABSTRACT: A document row object
+
 use Moo;
 use Sub::Quote 'quote_sub';
 use MooX::Types::MooseLike::Base qw<Str>;

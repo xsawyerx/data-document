@@ -1,4 +1,6 @@
 package Data::Document::Item;
+# ABSTRACT: A document item object
+
 use Moo;
 use MooX::Types::MooseLike::Base qw<Str>;
 use Object::ID;

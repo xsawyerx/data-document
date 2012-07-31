@@ -1,0 +1,53 @@
+=pod
+
+=head1 NAME
+
+Data::Document - Unified document API
+
+=head1 VERSION
+
+version 0.001
+
+=head1 SYNOPSIS
+
+FIXME completely outdated example:
+
+    my $doc = Data::Document->new();
+    my $row = $doc->add_row(
+        30,
+        format => $fmt,
+    );
+
+    my $item_id = $row->add_item(
+        $content,
+        column => 10,
+        format => $fmt,
+    );
+
+    $row->remove_item($item_id);
+
+    my $possible_row = Row->new(
+        40,
+        format => $fmt,    
+    );
+
+    if ($condition) {
+        $row->add_row($possible_row);
+    }
+
+    $doc->render(
+        output_format   => 'Excel',
+        output_filename => 'output.xls',
+    );
+
+=head1 AUTHOR
+
+Sawyer X <xsawyerx@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Sawyer X.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
