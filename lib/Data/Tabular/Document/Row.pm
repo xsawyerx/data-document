@@ -2,6 +2,7 @@ package Data::Tabular::Document::Row;
 use Moo;
 use Sub::Quote 'quote_sub';
 use MooX::Types::MooseLike::Base qw<Str>;
+use Carp;
 use Safe::Isa;
 use Object::ID;
 use Data::Tabular::Document::Item;
@@ -12,22 +13,18 @@ has items => (
     is  => 'ro',
     isa => quote_sub(q!
         use Safe::Isa;
-        ref $_[0] and ref $_[0] eq 'ARRAY'
-            or die "$_[0] must be an arrayref";
+        my $items = shift;
+        ref $items and ref $items eq ref({})
+            or die "$items must be a hashref";
 
         my $namespace = 'Data::Tabular::Document::Item';
 
-        foreach my $item ( @{ $_[0] } ) {
-            $item->$_isa($namespace)
-                or die "$item must be a $namespace object";
+        foreach my $key ( keys %{$items} ) {
+            my $object = $items->{$key} || '';
+            $object->$_isa($namespace)
+                or die "$object must be a $namespace object";
         }
     !),
-);
-
-has content => (
-    is       => 'ro',
-    isa      => Str,
-    required => 1,
 );
 
 sub BUILDARGS {
@@ -36,8 +33,11 @@ sub BUILDARGS {
     @_ % 2 == 0 and return {@_};
 
     my $content = shift;
+    my $item    = Data::Tabular::Document::Item->new($content);
     my $args    = {
-        items => Data::Tabular::Document::Item->new($content),
+        items => {
+            $item->object_id => $item,
+        },
         @_,
     };
     return $args;
