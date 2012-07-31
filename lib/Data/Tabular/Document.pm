@@ -2,6 +2,7 @@ package Data::Tabular::Document;
 # ABSTRACT: Tabular document thingamagig
 
 use Moo;
+use Sub::Quote 'quote_sub';
 use MooX::Types::MooseLike::Base qw<Int Str ArrayRef>;
 use Safe::Isa;
 use Carp;
@@ -12,7 +13,18 @@ use Data::Tabular::Document::Row;
 
 has rows => (
     is  => 'ro',
-    isa => ArrayRef,
+    isa => quote_sub(q!
+        use Safe::Isa;
+        ref $_[0] and ref $_[0] eq 'ARRAY'
+            or die "$_[0] must be an arrayref";
+
+        my $namespace = 'Data::Tabular::Document::Row';
+
+        foreach my $item ( @{ $_[0] } ) {
+            $item->$_isa($namespace)
+                or die "$item must be a $namespace object";
+        }
+    !),
 );
 
 sub add_row {
