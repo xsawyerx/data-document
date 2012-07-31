@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 11;
+use Test::More tests => 9;
 use Test::Fatal;
 use Data::Document;
 
@@ -36,11 +36,9 @@ like(
 
     sub render {
         my $self = shift;
-        my $doc  = shift;
         my %args = @_;
 
         isa_ok( $self, 'Data::Document::Renderer::Exceptional' );
-        isa_ok( $doc,  'Data::Document' );
 
         $count++ == 1 and is( $self->title, 'HI!', 'Renderer arguments set' );
     }
