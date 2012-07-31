@@ -8,19 +8,19 @@ use Safe::Isa;
 use Carp;
 use Class::Load 'try_load_class';
 use Scalar::Util 'looks_like_number';
-
 use Data::Document::Row;
 
 has rows => (
     is  => 'ro',
     isa => quote_sub(q!
         use Safe::Isa;
-        ref $_[0] and ref $_[0] eq 'ARRAY'
-            or die "$_[0] must be an arrayref";
+        ref $_[0] and ref $_[0] eq 'HASH'
+            or die "$_[0] must be an hashref";
 
         my $namespace = 'Data::Document::Row';
 
-        foreach my $item ( @{ $_[0] } ) {
+        foreach my $id ( keys %{ $_[0] } ) {
+            my $item = $_[0]->{$id};
             $item->$_isa($namespace)
                 or die "$item must be a $namespace object";
         }
@@ -63,7 +63,7 @@ sub render {
     my ( $loaded, $res ) = try_load_class($class);
     $loaded or croak "Can't load $class, is it a supported renderer? ($res)";
 
-    $class->new(%args)->render($self);
+    $class->new(%args)->render( $self->rows_list );
 }
 
 1;
