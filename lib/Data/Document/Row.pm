@@ -1,13 +1,13 @@
-package Data::Tabular::Document::Row;
+package Data::Document::Row;
 use Moo;
 use Sub::Quote 'quote_sub';
 use MooX::Types::MooseLike::Base qw<Str>;
 use Carp;
 use Safe::Isa;
 use Object::ID;
-use Data::Tabular::Document::Item;
+use Data::Document::Item;
 
-with 'Data::Tabular::Document::Role::Formattable';
+with 'Data::Document::Role::Formattable';
 
 has items => (
     is  => 'ro',
@@ -17,7 +17,7 @@ has items => (
         ref $items and ref $items eq ref({})
             or die "$items must be a hashref";
 
-        my $namespace = 'Data::Tabular::Document::Item';
+        my $namespace = 'Data::Document::Item';
 
         foreach my $key ( keys %{$items} ) {
             my $object = $items->{$key} || '';
@@ -33,7 +33,7 @@ sub BUILDARGS {
     @_ % 2 == 0 and return {@_};
 
     my $content = shift;
-    my $item    = Data::Tabular::Document::Item->new($content);
+    my $item    = Data::Document::Item->new($content);
     my $args    = {
         items => {
             $item->object_id => $item,
@@ -48,13 +48,13 @@ sub add_item {
     my $content = shift;
     my %args    = @_;
 
-    if ( $content->$_isa('Data::Tabular::Document::Item') ) {
+    if ( $content->$_isa('Data::Document::Item') ) {
         my $id = $content->object_id;
         $self->{'items'}{$id} = $content;
         return $id;
     }
 
-    my $item = Data::Tabular::Document::Item->new( $content, %args );
+    my $item = Data::Document::Item->new( $content, %args );
     my $id   = $item->object_id;
 
     $self->{'items'}{$id} = $item;

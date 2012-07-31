@@ -1,9 +1,9 @@
-package Data::Tabular::Document::Item;
+package Data::Document::Item;
 use Moo;
 use MooX::Types::MooseLike::Base qw<Str>;
 use Object::ID;
 
-with 'Data::Tabular::Document::Role::Formattable';
+with 'Data::Document::Role::Formattable';
 
 has content => (
     is       => 'ro',

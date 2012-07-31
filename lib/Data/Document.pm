@@ -1,5 +1,5 @@
-package Data::Tabular::Document;
-# ABSTRACT: Tabular document thingamagig
+package Data::Document;
+# ABSTRACT: Document thingamagig
 
 use Moo;
 use Sub::Quote 'quote_sub';
@@ -9,7 +9,7 @@ use Carp;
 use Class::Load 'try_load_class';
 use Scalar::Util 'looks_like_number';
 
-use Data::Tabular::Document::Row;
+use Data::Document::Row;
 
 has rows => (
     is  => 'ro',
@@ -18,7 +18,7 @@ has rows => (
         ref $_[0] and ref $_[0] eq 'ARRAY'
             or die "$_[0] must be an arrayref";
 
-        my $namespace = 'Data::Tabular::Document::Row';
+        my $namespace = 'Data::Document::Row';
 
         foreach my $item ( @{ $_[0] } ) {
             $item->$_isa($namespace)
@@ -32,13 +32,13 @@ sub add_row {
     my $content = shift;
     my %args    = @_;
 
-    if ( $content->$_isa('Data::Tabular::Document::Row') ) {
+    if ( $content->$_isa('Data::Document::Row') ) {
         my $id = $content->object_id;
         $self->{'rows'}{$id} = $content;
         return $id;
     }
 
-    my $row = Data::Tabular::Document::Row->new( $content, %args );
+    my $row = Data::Document::Row->new( $content, %args );
     my $id  = $row->object_id;
 
     $self->{'rows'}{$id} = $row;
@@ -61,7 +61,7 @@ sub render {
     my $self     = shift;
     my $renderer = shift or croak 'Please provide a supported renderer';
     my %args     = @_ ? @_ : ();
-    my $class    = "Data::Tabular::Document::Renderer::$renderer";
+    my $class    = "Data::Document::Renderer::$renderer";
 
     my ( $loaded, $res ) = try_load_class($class);
     $loaded or croak "Can't load $class, is it a supported renderer? ($res)";
@@ -77,7 +77,7 @@ __END__
 
 FIXME completely outdated example:
 
-    my $doc = Document->new();
+    my $doc = Data::Document->new();
     my $row = $doc->add_row(
         30,
         format => $fmt,
