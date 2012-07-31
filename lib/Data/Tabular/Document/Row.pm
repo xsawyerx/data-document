@@ -7,7 +7,7 @@ use Safe::Isa;
 use Object::ID;
 use Data::Tabular::Document::Item;
 
-has format  => ( is => 'ro' );
+with 'Data::Tabular::Document::Role::Formattable';
 
 has items => (
     is  => 'ro',

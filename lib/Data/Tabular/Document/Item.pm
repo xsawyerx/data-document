@@ -3,7 +3,7 @@ use Moo;
 use MooX::Types::MooseLike::Base qw<Str>;
 use Object::ID;
 
-has format  => ( is => 'ro' );
+with 'Data::Tabular::Document::Role::Formattable';
 
 has content => (
     is       => 'ro',
