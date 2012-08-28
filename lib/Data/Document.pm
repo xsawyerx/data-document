@@ -14,13 +14,12 @@ has rows => (
     is  => 'ro',
     isa => quote_sub(q!
         use Safe::Isa;
-        ref $_[0] and ref $_[0] eq 'HASH'
-            or die "$_[0] must be an hashref";
+        ref $_[0] and ref $_[0] eq ref([])
+            or die "$_[0] must be an arrayref";
 
         my $namespace = 'Data::Document::Row';
 
-        foreach my $id ( keys %{ $_[0] } ) {
-            my $item = $_[0]->{$id};
+        foreach my $item ( @{ $_[0] } ) {
             $item->$_isa($namespace)
                 or die "$item must be a $namespace object";
         }
@@ -33,25 +32,33 @@ sub add_row {
     my %args    = @_;
 
     if ( $content->$_isa('Data::Document::Row') ) {
-        $self->{'rows'}{ $content->object_id } = $content;
+        push @{ $self->{'rows'} }, $content;
         return $content;
     }
 
     my $row = Data::Document::Row->new( $content, %args );
-    $self->{'rows'}{ $row->object_id } = $row;
+    push @{ $self->{'rows'} }, $row;
     return $row;
 }
 
 sub remove_row {
     my $self = shift;
     my $id   = shift or croak 'Provide an ID to remove';
+    my $idx  = 0;
 
-    delete $self->{'rows'}{$id};
+    foreach my $row ( @{ $self->{'rows'} } ) {
+        if ( $row->object_id eq $id ) {
+            splice @{ $self->{'rows'} }, $idx, 1;
+            last;
+        }
+
+        $idx++;
+    }
 }
 
 sub rows_list {
     my $self = shift;
-    return $self->rows ? values %{ $self->rows } : ()
+    return $self->rows ? @{ $self->rows } : ()
 }
 
 sub render {
@@ -90,7 +97,7 @@ FIXME completely outdated example:
 
     my $possible_row = Row->new(
         40,
-        format => $fmt,    
+        format => $fmt,
     );
 
     if ($condition) {

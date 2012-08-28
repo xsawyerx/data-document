@@ -16,13 +16,12 @@ has items => (
     isa => quote_sub(q!
         use Safe::Isa;
         my $items = shift;
-        ref $items and ref $items eq ref({})
-            or die "$items must be a hashref";
+        ref $items and ref $items eq ref([])
+            or die "$items must be a arrayref";
 
         my $namespace = 'Data::Document::Item';
 
-        foreach my $key ( keys %{$items} ) {
-            my $object = $items->{$key} || '';
+        foreach my $object ( @{$items} ) {
             $object->$_isa($namespace)
                 or die "$object must be a $namespace object";
         }
@@ -37,9 +36,7 @@ sub BUILDARGS {
     my $content = shift;
     my $item    = Data::Document::Item->new($content);
     my $args    = {
-        items => {
-            $item->object_id => $item,
-        },
+        items => [$item],
         @_,
     };
 
@@ -53,25 +50,33 @@ sub add_item {
 
     if ( $content->$_isa('Data::Document::Item') ) {
         my $id = $content->object_id;
-        $self->{'items'}{$id} = $content;
+        push @{ $self->{'items'} }, $content;
         return $id;
     }
 
     my $item = Data::Document::Item->new( $content, %args );
-    $self->{'items'}{ $item->object_id } = $item;
+    push @{ $self->{'items'} }, $item;
     return $item;
 }
 
 sub remove_item {
     my $self = shift;
     my $id   = shift or croak 'Provide an ID to remove';
+    my $idx  = 0;
 
-    delete $self->{'items'}{$id};
+    foreach my $item ( @{ $self->{'items'} } ) {
+        if ( $item->object_id eq $id ) {
+            splice @{ $self->{'items'} }, $idx, 1;
+            last;
+        }
+
+        $idx++;
+    }
 }
 
 sub items_list {
     my $self = shift;
-    return values %{ $self->items };
+    return $self->items ? @{ $self->items } : ();
 }
 
 1;
