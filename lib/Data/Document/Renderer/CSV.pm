@@ -43,7 +43,8 @@ sub render {
     foreach my $row (@rows) {
         my @items = $row->items_list;
         $csv->print( $fh, [ map { $_->content } @items ] )
-            or die q{Can't CSV print to scalar};
+            or die q{Can't CSV print to scalar: } . $csv->error_diag;
+        print {$fh} "\n";
     }
 
     close $fh;
