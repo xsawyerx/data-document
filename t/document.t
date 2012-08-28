@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 11;
+use Test::More tests => 12;
 use Test::Fatal;
 use Data::Document;
 
@@ -23,27 +23,32 @@ isa_ok( $row2_object, 'Data::Document::Row' );
 my $row1_id = $row1_object->object_id;
 my $row = $doc->add_row($row2_object);
 my $row2_id = $doc->add_row($row2_object)->object_id;
-@rows = sort { $a->object_id cmp $b->object_id } $doc->rows_list;
-cmp_ok( scalar @rows, '==', 2, 'Multiple rows stored in document' );
-is_deeply( \@rows, [ $row1_object, $row2_object ], 'Can get row object' );
-
-my %rows = %{ $doc->rows };
+@rows = $doc->rows_list;
+cmp_ok( scalar @rows, '==', 3, 'Multiple rows stored in document' );
 is_deeply(
-    \%rows,
-    {
-        $row1_id => $row1_object,
-        $row2_id => $row2_object,
-    },
+    \@rows,
+    [ $row1_object, $row2_object, $row2_object ],
+    'Can get row object',
+);
+
+my $rows = $doc->rows;
+is_deeply(
+    $rows,
+    [ $row1_object, $row2_object, $row2_object ],
     'Can dump all rows',
 );
 
 $doc->remove_row($row1_id);
 @rows = $doc->rows_list;
-cmp_ok( scalar @rows, '==', 1, 'Row successfully deleted' );
-is_deeply( \@rows, [$row2_object], 'Correct row remained' );
+cmp_ok( scalar @rows, '==', 2, 'Row successfully deleted' );
+is_deeply( \@rows, [ $row2_object, $row2_object ], 'Correct row remained' );
 is_deeply(
     $doc->rows,
-    { $row2_id => $row2_object },
+    [ $row2_object, $row2_object ],
     'Can dump all rows after removal',
 );
+
+$doc->remove_row($row2_id);
+@rows = $doc->rows_list;
+cmp_ok( scalar @rows, '==', 1, 'Only first row deleted' );
 

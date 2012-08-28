@@ -26,7 +26,7 @@ is(
     my $items = $row->items;
     is_deeply(
         $items,
-        { $items[0]->object_id => $items[0] },
+        [ $items[0] ],
         'items vs. items_list',
     );
 }
@@ -35,8 +35,8 @@ is(
     my $item = Data::Document::Item->new(
         'hi', format => 'Mal',
     );
-    my $row  = Data::Document::Row->new(
-        items  => { $item->object_id => $item },
+    my $row = Data::Document::Row->new(
+        items  => [$item],
         format => 'Gorgak',
     );
 
@@ -51,7 +51,7 @@ is(
     my $items = $row->items;
     is_deeply(
         $items,
-        { $items[0]->object_id => $items[0] },
+        [ $items[0] ],
         'items vs. items_list',
     );
 }

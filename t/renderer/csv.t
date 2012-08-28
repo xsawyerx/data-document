@@ -15,14 +15,11 @@ can_ok( $csv, 'render' );
 my $row1 = Data::Document::Row->new('hello');
 my $row2 = Data::Document::Row->new('world');
 isa_ok( $_, 'Data::Document::Row' ) for $row1, $row2;
-my $result = $csv->render( $row2, $row1 );
-is( $result, 'worldhello', 'CSV rendering' );
+my $result = $csv->render( $row1, $row2 );
+is( $result, "hello\nworld\n", 'CSV rendering' );
 
 my $doc1 = Data::Document->new(
-    rows => {
-        $row1->object_id => $row1,
-        $row2->object_id => $row2,
-    }
+    rows => [ $row1, $row2 ],
 );
 
 isa_ok( $doc1, 'Data::Document' );
@@ -41,8 +38,8 @@ $doc2->add_row('world');
 $doc2->add_row('hello');
 
 is_deeply(
-    $result,
     $doc2->render('CSV'),
+    "world\nhello\n",
     'Render directly vs. through Data::Document + add_row',
 )
 
