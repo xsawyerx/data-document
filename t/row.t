@@ -17,8 +17,8 @@ is(
 {
     my $row = Data::Document::Row->new('woohoo');
     isa_ok( $row, 'Data::Document::Row' );
-    can_ok( $row, qw<add_item remove_item items_list> );
-    my @items = $row->items_list;
+    can_ok( $row, qw<add_items remove_items list_items> );
+    my @items = $row->list_items;
     cmp_ok( scalar @items, '==', 1, 'Row items' );
     isa_ok( $items[0], 'Data::Document::Item' );
     is( $items[0]->content, 'woohoo', 'Item content' );
@@ -41,7 +41,7 @@ is(
     );
 
     isa_ok( $row, 'Data::Document::Row' );
-    my @items = $row->items_list;
+    my @items = $row->list_items;
     cmp_ok( scalar @items, '==', 1, 'Row items' );
     isa_ok( $items[0], 'Data::Document::Item' );
     is( $items[0]->content, 'hi', 'Item content' );

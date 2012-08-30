@@ -33,13 +33,13 @@ is_deeply(
 
 my $doc2 = Data::Document->new();
 isa_ok( $doc2, 'Data::Document'   );
-can_ok( $doc2, qw<add_row render> );
-$doc2->add_row('world');
-$doc2->add_row('hello');
+can_ok( $doc2, qw<add_rows render> );
+$doc2->add_rows('world');
+$doc2->add_rows('hello');
 
 is_deeply(
     $doc2->render('CSV'),
     "world\nhello\n",
-    'Render directly vs. through Data::Document + add_row',
+    'Render directly vs. through Data::Document + add_rows',
 )
 

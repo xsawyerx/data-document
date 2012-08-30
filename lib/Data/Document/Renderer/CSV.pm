@@ -41,7 +41,7 @@ sub render {
     open my $fh, '>', \$out;
 
     foreach my $row (@rows) {
-        my @items = $row->items_list;
+        my @items = $row->list_items;
         $csv->print( $fh, [ map { $_->content } @items ] )
             or die q{Can't CSV print to scalar: } . $csv->error_diag;
         print {$fh} "\n";

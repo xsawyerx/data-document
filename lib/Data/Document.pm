@@ -26,7 +26,7 @@ has rows => (
     !),
 );
 
-sub add_row {
+sub add_rows {
     my $self    = shift;
     my $content = shift;
     my %args    = @_;
@@ -41,7 +41,7 @@ sub add_row {
     return $row;
 }
 
-sub remove_row {
+sub remove_rows {
     my $self = shift;
     my $id   = shift or croak 'Provide an ID to remove';
     my $idx  = 0;
@@ -56,7 +56,7 @@ sub remove_row {
     }
 }
 
-sub rows_list {
+sub list_rows {
     my $self = shift;
     return $self->rows ? @{ $self->rows } : ()
 }
@@ -70,7 +70,7 @@ sub render {
     my ( $loaded, $res ) = try_load_class($class);
     $loaded or croak "Can't load $class, is it a supported renderer? ($res)";
 
-    $class->new(%args)->render( $self->rows_list );
+    $class->new(%args)->render( $self->list_rows );
 }
 
 1;

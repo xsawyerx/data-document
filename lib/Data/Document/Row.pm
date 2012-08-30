@@ -43,7 +43,7 @@ sub BUILDARGS {
     return $args;
 }
 
-sub add_item {
+sub add_items {
     my $self    = shift;
     my $content = shift;
     my %args    = @_;
@@ -59,7 +59,7 @@ sub add_item {
     return $item;
 }
 
-sub remove_item {
+sub remove_items {
     my $self = shift;
     my $id   = shift or croak 'Provide an ID to remove';
     my $idx  = 0;
@@ -74,7 +74,7 @@ sub remove_item {
     }
 }
 
-sub items_list {
+sub list_items {
     my $self = shift;
     return $self->items ? @{ $self->items } : ();
 }
