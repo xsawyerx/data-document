@@ -30,8 +30,10 @@ has rows => (
 
 sub add_row {
     my $self    = shift;
-    my $content = shift or croak 'Provide a row to add';
+    my $content = shift;
     my %args    = @_ || ();
+
+    defined $content or croak 'Provide a row to add';
 
     if ( $content->$_isa('Data::Document::Row') ) {
         push @{ $self->rows }, $content;

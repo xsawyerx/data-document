@@ -47,8 +47,10 @@ sub BUILDARGS {
 
 sub add_item {
     my $self    = shift;
-    my $content = shift or croak 'Provide an item to add';
+    my $content = shift;
     my %args    = @_ || ();
+
+    defined $content or croak 'Provide an item to add';
 
     if ( $content->$_isa('Data::Document::Item') ) {
         push @{ $self->items }, $content;
