@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 11;
+use Test::More tests => 12;
 use Data::Document;
 use Data::Document::Row;
 use Data::Document::Renderer::CSV;
@@ -33,13 +33,20 @@ is_deeply(
 
 my $doc2 = Data::Document->new();
 isa_ok( $doc2, 'Data::Document'   );
-can_ok( $doc2, qw<add_rows render> );
-$doc2->add_rows('world');
-$doc2->add_rows('hello');
+can_ok( $doc2, qw<add_row add_rows render> );
+$doc2->add_row('world');
+$doc2->add_row('hello');
 
 is_deeply(
     $doc2->render('CSV'),
     "world\nhello\n",
     'Render directly vs. through Data::Document + add_rows',
-)
+);
+
+$doc2->add_rows(qw<try again>);
+is_deeply(
+    $doc2->render('CSV'),
+    "world\nhello\ntry\nagain\n",
+    'add_row vs. add_rows',
+);
 

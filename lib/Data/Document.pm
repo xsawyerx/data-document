@@ -11,8 +11,8 @@ use Scalar::Util 'looks_like_number';
 use Data::Document::Row;
 
 has rows => (
-    is  => 'ro',
-    isa => quote_sub(q!
+    is      => 'ro',
+    isa     => quote_sub(q!
         use Safe::Isa;
         ref $_[0] and ref $_[0] eq ref([])
             or die "$_[0] must be an arrayref";
@@ -24,35 +24,59 @@ has rows => (
                 or die "$item must be a $namespace object";
         }
     !),
+
+    default => sub {[]},
 );
 
-sub add_rows {
+sub add_row {
     my $self    = shift;
-    my $content = shift;
-    my %args    = @_;
+    my $content = shift or croak 'Provide a row to add';
+    my %args    = @_ || ();
 
     if ( $content->$_isa('Data::Document::Row') ) {
-        push @{ $self->{'rows'} }, $content;
+        push @{ $self->rows }, $content;
         return $content;
     }
 
     my $row = Data::Document::Row->new( $content, %args );
-    push @{ $self->{'rows'} }, $row;
+    push @{ $self->rows }, $row;
     return $row;
 }
 
-sub remove_rows {
+sub add_rows {
+    my $self    = shift;
+    my @content = @_ or return;
+    my %args    = ref $content[-1] && ref $content[-1] eq ref {} ?
+                  %{ pop @content } : ();
+
+    my @rows = ();
+    foreach my $content (@content) {
+        push @rows, $self->add_row( $content, %args );
+    }
+    return @rows;
+}
+
+sub remove_row {
     my $self = shift;
     my $id   = shift or croak 'Provide an ID to remove';
     my $idx  = 0;
 
-    foreach my $row ( @{ $self->{'rows'} } ) {
+    foreach my $row ( @{ $self->rows } ) {
         if ( $row->object_id eq $id ) {
-            splice @{ $self->{'rows'} }, $idx, 1;
+            splice @{ $self->rows }, $idx, 1;
             last;
         }
 
         $idx++;
+    }
+}
+
+sub remove_rows {
+    my $self = shift;
+    my @ids  = shift;
+
+    foreach my $id (@ids) {
+        $self->remove_row($id);
     }
 }
 
