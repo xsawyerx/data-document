@@ -12,8 +12,8 @@ use Data::Document::Item;
 with 'Data::Document::Role::Formattable';
 
 has items => (
-    is  => 'ro',
-    isa => quote_sub(q!
+    is      => 'ro',
+    isa     => quote_sub(q!
         use Safe::Isa;
         my $items = shift;
         ref $items and ref $items eq ref([])
@@ -26,6 +26,8 @@ has items => (
                 or die "$object must be a $namespace object";
         }
     !),
+
+    default => sub {[]},
 );
 
 sub BUILDARGS {
@@ -43,20 +45,32 @@ sub BUILDARGS {
     return $args;
 }
 
-sub add_items {
+sub add_item {
     my $self    = shift;
-    my $content = shift;
-    my %args    = @_;
+    my $content = shift or croak 'Provide an item to add';
+    my %args    = @_ || ();
 
     if ( $content->$_isa('Data::Document::Item') ) {
-        my $id = $content->object_id;
-        push @{ $self->{'items'} }, $content;
-        return $id;
+        push @{ $self->items }, $content;
+        return $content;
     }
 
     my $item = Data::Document::Item->new( $content, %args );
-    push @{ $self->{'items'} }, $item;
+    push @{ $self->items }, $item;
     return $item;
+}
+
+sub add_items {
+    my $self    = shift;
+    my @content = @_ or return;
+    my %args    = ref $content[-1] && ref $content[-1] eq ref {} ?
+                  %{ pop @content } : ();
+
+    my @items = ();
+    foreach my $content (@content) {
+        push @items, $self->add_item( $content, %args );
+    }
+    return @items;
 }
 
 sub remove_items {
