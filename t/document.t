@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 12;
+use Test::More tests => 20;
 use Test::Fatal;
 use Data::Document;
 
@@ -49,6 +49,20 @@ is_deeply(
 );
 
 $doc->remove_row($row2_id);
+$doc->add_rows( qw<item2 item3 item4> );
 @rows = $doc->list_rows;
-cmp_ok( scalar @rows, '==', 1, 'Only first row deleted' );
+cmp_ok( scalar @rows, '==', 4, 'one deleted, 3 added' );
+is_deeply(
+    $doc->rows->[0],
+    $row1_object,
+    'Row 1 still exists',
+);
 
+shift @rows;
+foreach my $item (qw<item2 item3 item4>) {
+    my $row = shift @rows;
+    cmp_ok( scalar @{ $row->items }, '==', 1, 'One item in row' );
+    is_deeply( $row->items->[0]->content, $item, "Correct item ($item)" );
+}
+
+cmp_ok( scalar @rows, '==', 0, 'No more rows left' );
